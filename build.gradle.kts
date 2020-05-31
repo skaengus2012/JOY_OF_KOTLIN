@@ -3,7 +3,7 @@ group = "com.github.skaengus2012"
 version = "1.0-SNAPSHOT"
 
 plugins {
-    kotlin("jvm") version "1.3.61"
+    kotlin(module = "jvm") version "1.3.72"
 }
 
 repositories {
@@ -11,7 +11,11 @@ repositories {
 }
 
 dependencies {
-    implementation(kotlin("stdlib-jdk8"))
+    implementation(kotlin(module = "stdlib-jdk8"))
+
+    // junit 5
+    testImplementation("org.junit.jupiter", "junit-jupiter-api", "5.6.2")
+    testRuntimeOnly("org.junit.jupiter", "junit-jupiter-engine", "5.6.2")
 }
 
 tasks {
@@ -21,5 +25,9 @@ tasks {
 
     compileTestKotlin {
         kotlinOptions.jvmTarget = "1.8"
+    }
+
+    test {
+        useJUnitPlatform()
     }
 }
