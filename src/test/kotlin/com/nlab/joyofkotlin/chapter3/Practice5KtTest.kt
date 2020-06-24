@@ -22,8 +22,6 @@ import org.junit.jupiter.api.Test
 class Practice5KtTest {
 
     @Test fun testSquareOfTriple() {
-        Price(1.0, "2")
-
         assertEquals(square(triple(2)),  higherComposer<Int, Int, Int>()(::square)(::triple)(2))
     }
 
