@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.nlab.joyofkotlin.util
+package com.nlab.joyofkotlin.chapter4
 
 /**
  * @author Doohyun

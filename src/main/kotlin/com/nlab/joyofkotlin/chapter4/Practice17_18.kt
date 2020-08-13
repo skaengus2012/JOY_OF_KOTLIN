@@ -16,7 +16,6 @@
 
 package com.nlab.joyofkotlin.chapter4
 
-import com.nlab.joyofkotlin.util.tail
 import java.math.BigInteger
 
 /**

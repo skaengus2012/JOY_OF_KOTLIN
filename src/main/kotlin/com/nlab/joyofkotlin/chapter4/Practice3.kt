@@ -24,7 +24,7 @@ import java.math.BigInteger
 
 fun main() {
     println(fibonacci(4))
-    println(fibonacciV2(1))
+    println(fibonacciV2(4))
 }
 
 fun fibonacci(n: Int): BigInteger {
@@ -47,7 +47,7 @@ fun fibonacciV2(n: Int): BigInteger {
     if (n == 0) return BigInteger.ONE
     if (n == 1) return BigInteger.ONE
     tailrec fun fibonacciTail(n: Int, a: BigInteger, b: BigInteger): BigInteger {
-        return if (n == 0) return a else fibonacciTail(n - 1, a + b, a)
+        return if (n == 0) a else fibonacciTail(n - 1, a + b, a)
     }
     return fibonacciTail(n - 1, BigInteger.ONE, BigInteger.ONE)
 }
