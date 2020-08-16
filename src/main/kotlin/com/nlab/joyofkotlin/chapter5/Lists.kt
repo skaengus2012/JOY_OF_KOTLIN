@@ -18,6 +18,8 @@ package com.nlab.joyofkotlin.chapter5
 
 fun List<Int>.sum(): Int = foldLeft(this, 0) { x -> { acc -> acc + x } }
 
+fun List<Double>.sum(): Double = foldLeft(this, 0.0) { x -> { acc -> acc + x } }
+
 fun List<Double>.product(): Double = foldLeft(this, 1.0) { x -> { acc -> acc * x } }
 
 fun <T, U> foldRight(

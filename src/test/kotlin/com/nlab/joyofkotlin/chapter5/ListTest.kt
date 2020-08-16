@@ -14,10 +14,8 @@
  * limitations under the License.
  */
 
-package com.nlab.joyofkotlin.chatper5
+package com.nlab.joyofkotlin.chapter5
 
-import com.nlab.joyofkotlin.chapter5.*
-import com.nlab.joyofkotlin.chapter5.List
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.*
 
