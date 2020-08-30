@@ -17,10 +17,6 @@
 package com.nlab.joyofkotlin.chapter6
 
 import com.nlab.joyofkotlin.chapter5.List
-import com.nlab.joyofkotlin.chpater6.Option
-import com.nlab.joyofkotlin.chpater6.lift
-import com.nlab.joyofkotlin.chpater6.map2
-import com.nlab.joyofkotlin.chpater6.variance
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.*
 
@@ -80,12 +76,12 @@ class OptionTest {
     @Test fun testSequence() {
         assertEquals(
             Option(List(1, 2, 3)).toString(),
-            com.nlab.joyofkotlin.chpater6.sequence(List(Option(1), Option(2), Option(3))).toString()
+            com.nlab.joyofkotlin.chapter6.sequence(List(Option(1), Option(2), Option(3))).toString()
         )
 
         assertEquals(
             Option<Int>(),
-            com.nlab.joyofkotlin.chpater6.sequence(List(Option(1), Option(2), Option(), Option(3)))
+            com.nlab.joyofkotlin.chapter6.sequence(List(Option(1), Option(2), Option(), Option(3)))
         )
     }
 

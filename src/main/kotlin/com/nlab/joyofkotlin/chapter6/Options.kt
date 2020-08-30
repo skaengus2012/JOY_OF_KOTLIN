@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.nlab.joyofkotlin.chpater6
+package com.nlab.joyofkotlin.chapter6
 
 import com.nlab.joyofkotlin.chapter5.*
 import com.nlab.joyofkotlin.chapter5.List
