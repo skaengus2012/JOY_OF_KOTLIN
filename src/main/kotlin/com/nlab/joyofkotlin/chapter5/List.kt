@@ -16,6 +16,8 @@
 
 package com.nlab.joyofkotlin.chapter5
 
+import com.nlab.joyofkotlin.chapter7.Result
+import com.nlab.joyofkotlin.chapter8.foldLeft
 import java.lang.StringBuilder
 
 /**
@@ -23,6 +25,9 @@ import java.lang.StringBuilder
  */
 sealed class List<out T> {
     abstract fun isEmpty(): Boolean
+    abstract fun sizeMemoized(): Int
+    abstract fun headSafe(): Result<T>
+    abstract fun lastSafe(): Result<T>
 
     fun construct(item: @UnsafeVariance T): List<T> = Cons(item, this)
 
@@ -57,14 +62,106 @@ sealed class List<out T> {
 
     fun init(): List<T> = reverse().drop(1).reverse()
 
+    fun getAt(index: Int): Result<T> {
+        return if (index < 0 || index >= sizeMemoized()) {
+            Result.failure("Index out of bound")
+        } else {
+            foldLeft(
+                ResultPair(Result.failure("Index out of bound"), index),
+                p = { pair -> pair.second < 0 },
+                f = { acc: ResultPair<T> ->
+                    { t: T ->
+                        ResultPair(Result(t), acc.second - 1)
+                    }
+                }
+            ).first
+        }
+    }
+
+    fun startWith(sub: List<@UnsafeVariance T>): Boolean {
+        tailrec fun startWithRec(
+            target: List<@UnsafeVariance T>,
+            subList: List<@UnsafeVariance T>
+        ): Boolean = when(subList) {
+            is Nil -> true
+            is Cons -> {
+                if (target is Cons && target.head == subList.head) {
+                    startWithRec(target.tail, subList.tail)
+                } else {
+                    false
+                }
+            }
+        }
+
+        return startWithRec(this, sub)
+    }
+
+    fun hasSubList(sub: List<@UnsafeVariance T>): Boolean {
+        tailrec fun hasSubListRec(
+            target: List<@UnsafeVariance T>
+        ): Boolean = when(target) {
+            is Nil -> sub.isEmpty()
+            is Cons -> {
+                if (target.startWith(sub)) {
+                    true
+                } else {
+                    hasSubListRec(target.tail)
+                }
+            }
+        }
+
+        return hasSubListRec(this)
+    }
+
+    fun <U> groupBy(mapper: (T) -> U): Map<U, List<T>> = foldLeft(reverse(), mapOf()) { map ->
+        { item ->
+            mapper(item).let { key -> map + (key to map.getOrDefault(key, Nil).construct(item)) }
+        }
+    }
+
+    fun exists(p: (T) -> Boolean): Boolean = foldLeft(false, { it }) {
+        { t: T -> p(t) }
+    }
+
+    inline fun forAll(crossinline p: (T) -> Boolean): Boolean = !exists { !p(it) }
+
+    private data class ResultPair<out T>(
+        val first: Result<T>,
+        val second: Int
+    ) {
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (javaClass != other?.javaClass) return false
+
+            other as ResultPair<*>
+
+            if (second != other.second) return false
+
+            return true
+        }
+
+        override fun hashCode(): Int {
+            return second
+        }
+    }
+
     internal object Nil : List<Nothing>() {
         override fun isEmpty(): Boolean = true
         override fun toString(): String = "[Nil]"
+        override fun sizeMemoized(): Int = 0
+        override fun headSafe(): Result<Nothing> = Result()
+        override fun lastSafe(): Result<Nothing> = Result()
     }
 
     internal class Cons<T>(internal val head: T, internal val tail: List<T>) : List<T>() {
 
         override fun isEmpty(): Boolean = false
+
+        override fun sizeMemoized(): Int = tail.sizeMemoized() + 1
+
+        override fun headSafe(): Result<T> = Result(head)
+
+        override fun lastSafe(): Result<T> = foldLeft(this, Result()) { { value: T -> Result(value) } }
 
         override fun toString(): String = StringBuilder()
             .append("[")

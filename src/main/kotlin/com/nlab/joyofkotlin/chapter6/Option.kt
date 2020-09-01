@@ -39,14 +39,14 @@ sealed class Option<out T> {
 
     fun orElse(default: () -> Option<@UnsafeVariance T>): Option<T> = map { this }.getOrElse(default)
 
-    private object None : Option<Nothing>() {
+    object None : Option<Nothing>() {
         override fun isEmpty(): Boolean = true
         override fun toString(): String = "None"
         override fun equals(other: Any?): Boolean = this === other
         override fun hashCode(): Int = 0
     }
 
-    private data class Some<out T>(val value: T) : Option<T>() {
+    data class Some<out T>(val value: T) : Option<T>() {
         override fun isEmpty(): Boolean = false
     }
 
