@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 The Android Open Source Project
+ * Copyright (C) 2018 The N's lab Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,10 @@
  */
 
 package com.nlab.joyofkotlin.chapter3
+
+/**
+ * @author Doohyun
+ */
 
 fun square(n: Int) = n * n
 fun triple(n: Int) = n * 3

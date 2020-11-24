@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 The Android Open Source Project
+ * Copyright (C) 2018 The N's lab Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -76,12 +76,12 @@ class OptionTest {
     @Test fun testSequence() {
         assertEquals(
             Option(List(1, 2, 3)).toString(),
-            com.nlab.joyofkotlin.chapter6.sequence(List(Option(1), Option(2), Option(3))).toString()
+            sequence(List(Option(1), Option(2), Option(3))).toString()
         )
 
         assertEquals(
             Option<Int>(),
-            com.nlab.joyofkotlin.chapter6.sequence(List(Option(1), Option(2), Option(), Option(3)))
+            sequence(List(Option(1), Option(2), Option(), Option(3)))
         )
     }
 

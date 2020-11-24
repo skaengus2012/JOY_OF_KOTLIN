@@ -14,22 +14,19 @@
  * limitations under the License.
  */
 
-package com.nlab.joyofkotlin.chapter3
-
-import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.Test
+package com.nlab.joyofkotlin.chapter11
 
 /**
  * @author Doohyun
  */
-class PracticePartialTest {
+sealed class Color {
 
-    @Test fun testPartialA() {
-        assertEquals(-2, partialA(4) { a: Int -> { b: Int -> a - b } } (6))
+    internal object R : Color() {
+        override fun toString(): String = "R"
     }
 
-    @Test fun testPartialB() {
-        assertEquals(2, partialB(4) { a: Int -> { b: Int -> a - b } } (6))
+    internal object B : Color() {
+        override fun toString(): String = "B"
     }
 
 }

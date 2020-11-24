@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 The Android Open Source Project
+ * Copyright (C) 2018 The N's lab Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ package com.nlab.joyofkotlin.chapter10
 import com.nlab.joyofkotlin.chapter5.List
 import com.nlab.joyofkotlin.chapter5.foldLeft
 import com.nlab.joyofkotlin.chapter6.Option
-import com.nlab.joyofkotlin.chapter8.foldLeft
 import kotlin.math.abs
 import kotlin.math.max
 
@@ -34,6 +33,7 @@ sealed class Tree<out T : Comparable<@UnsafeVariance T>> {
     abstract fun <U> foldLeft(identity: U, f: (U) -> (T) -> U, g: (U) -> (U) -> (U)): U
     abstract fun <U> foldRight(identity: U, f: (T) -> (U) -> (U), g: (U) -> (U) -> (U)): U
     abstract fun <U> foldInOrder(identity: U, f: (U) -> (T) -> (U) -> (U)): U
+    abstract fun <U> foldInReverseOrder(identity: U, f: (U) -> (T) -> (U) -> (U)): U
     abstract fun <U> foldPreOrder(identity: U, f: (T) -> (U) -> (U) -> (U)): U
     abstract fun <U> foldPostOrder(identity: U, f: (U) -> (U) -> (T) -> U): U
     abstract fun <U : Comparable<U>> map(f: (T) -> U): Tree<U>
@@ -58,6 +58,15 @@ sealed class Tree<out T : Comparable<@UnsafeVariance T>> {
             value == element -> true
             value > element -> left.contains(element)
             else -> right.contains(element)
+        }
+    }
+
+    operator fun get(element: @UnsafeVariance T): Option<T> = when(this) {
+        is Empty -> Option()
+        is TreeEx -> when {
+            value == element -> Option(value)
+            value > element -> left[element]
+            else -> right[element]
         }
     }
 
@@ -121,6 +130,7 @@ sealed class Tree<out T : Comparable<@UnsafeVariance T>> {
         override fun <U> foldLeft(identity: U, f: (U) -> (Nothing) -> U, g: (U) -> (U) -> U): U = identity
         override fun <U> foldRight(identity: U, f: (Nothing) -> (U) -> U, g: (U) -> (U) -> U): U = identity
         override fun <U> foldInOrder(identity: U, f: (U) -> (Nothing) -> (U) -> U): U = identity
+        override fun <U> foldInReverseOrder(identity: U, f: (U) -> (Nothing) -> (U) -> U): U = identity
         override fun <U> foldPreOrder(identity: U, f: (Nothing) -> (U) -> (U) -> U): U = identity
         override fun <U> foldPostOrder(identity: U, f: (U) -> (U) -> (Nothing) -> U): U = identity
         override fun <U : Comparable<U>> map(f: (Nothing) -> U): Tree<U> = this
@@ -153,6 +163,10 @@ sealed class Tree<out T : Comparable<@UnsafeVariance T>> {
             identity: U,
             f: (U) -> (T) -> (U) -> U
         ): U = f(left.foldInOrder(identity, f))(value)(right.foldInOrder(identity, f))
+        override fun <U> foldInReverseOrder(
+            identity: U,
+            f: (U) -> (T) -> (U) -> U
+        ): U = f(right.foldInReverseOrder(identity, f))(value)(left.foldInReverseOrder(identity, f))
         override fun <U> foldPreOrder(
             identity: U,
             f: (T) -> (U) -> (U) -> U

@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-package com.nlab.joyofkotlin.chapter8
+package com.nlab.joyofkotlin.chapter11
+
 
 import com.nlab.joyofkotlin.chapter5.List
 import org.junit.jupiter.api.Assertions.*
@@ -23,24 +24,27 @@ import org.junit.jupiter.api.Test
 /**
  * @author Doohyun
  */
-class ListTest {
+class MapTest {
 
-    @Test fun testGetAt() {
-        assertTrue(List(1, 2, 3, 4).getAt(3).exists { it == 4 })
+    @Test fun testSize() {
+        assertTrue(Map<String, String>().isEmpty())
+        assertEquals(2, (Map<String, String>() + ("Hello" to "Kotlin") + ("Hello-Test" to "Kotlin")).size())
     }
 
-    @Test fun testHasSubList() {
-        assertTrue(List(1, 1, 2, 3, 4, 3).hasSubList(List(3, 4, 3)))
-        assertFalse(List(1, 1, 2, 3, 4, 3).hasSubList(List(1, 3, 4)))
+    @Test fun testPlus() {
+        assertTrue((Map<String, String>() + ("Hello" to "Kotlin")).contains("Hello"))
+        assertFalse((Map<String, String>() + ("Hello-Test" to "Kotlin")).contains("Hello"))
     }
 
-    @Test fun testRange() {
-        assertEquals(List(0, 1, 2, 3, 4).toString(), range(0, 5).toString())
+    @Test fun testMinus() {
+        assertFalse((Map<String, String>() + ("Hello" to "Kotlin") - "Hello").contains("Hello"))
     }
 
-    @Test fun testExist() {
-        assertTrue(List(1, 2, 3, 4, 5).exists { it < 2 })
-        assertFalse(List(1, 2, 3, 4, 5).exists { it > 10 })
+    @Test fun testValues() {
+        assertEquals(
+            List(1, 3, 6, 7, 8).toString(),
+            (Map<Int, Int>() + (3 to 3) + (7 to 7) + (6 to 6) + (8 to 8) + (1 to 1)).values().toString()
+        )
     }
 
 }

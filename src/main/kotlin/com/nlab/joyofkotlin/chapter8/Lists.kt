@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 The Android Open Source Project
+ * Copyright (C) 2018 The N's lab Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,10 @@ import com.nlab.joyofkotlin.chapter6.Option
 import com.nlab.joyofkotlin.chapter7.Result
 import com.nlab.joyofkotlin.chapter7.map2
 import java.util.concurrent.ExecutorService
+
+/**
+ * @author Doohyun
+ */
 
 fun <T> flattenResult(list: List<Result<T>>): List<T> = flatten(
     map(list) { result -> result.map { List(it) }.getOrElse(List()) }
@@ -170,12 +174,9 @@ fun <T, U> List<T>.parMap(es: ExecutorService, f: (T) -> U): Result<List<U>> = t
 
 
 fun <T, U> unfold(initializeValue: T, f: (T) -> Option<Pair<U, T>>): List<U> {
-    tailrec fun unfoldRec(acc: List<U>, value: T): List<U> {
-        val next = f(value)
-        return when(next) {
-            Option.None -> acc
-            is Option.Some -> unfoldRec(acc.construct(next.value.first), next.value.second)
-        }
+    tailrec fun unfoldRec(acc: List<U>, value: T): List<U> = when(val next = f(value)) {
+        Option.None -> acc
+        is Option.Some -> unfoldRec(acc.construct(next.value.first), next.value.second)
     }
 
     return unfoldRec(List(), initializeValue).reverse()

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.nlab.joyofkotlin.chapter3
+package com.nlab.joyofkotlin.chapter11
 
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
@@ -22,14 +22,19 @@ import org.junit.jupiter.api.Test
 /**
  * @author Doohyun
  */
-class PracticePartialTest {
+class InComparableMapTest {
 
-    @Test fun testPartialA() {
-        assertEquals(-2, partialA(4) { a: Int -> { b: Int -> a - b } } (6))
+    @Test fun testPlus() {
+        assertEquals(
+            "3",
+            (InComparableMap<Int, String>() + (1 to "2") + (1 to "3"))
+                .get(1)
+                .getOrElse("-1")
+        )
     }
 
-    @Test fun testPartialB() {
-        assertEquals(2, partialB(4) { a: Int -> { b: Int -> a - b } } (6))
+    @Test fun testMinus() {
+        assertFalse((InComparableMap<Int, String>() + (1 to "2") + (1 to "3") - 1).contains(1))
     }
 
 }

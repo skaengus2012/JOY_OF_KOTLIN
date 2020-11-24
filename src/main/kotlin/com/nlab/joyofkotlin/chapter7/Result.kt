@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 The Android Open Source Project
+ * Copyright (C) 2018 The N's lab Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,9 @@ import java.lang.Exception
 import java.lang.IllegalStateException
 import java.lang.RuntimeException
 
+/**
+ * @author Doohyun
+ */
 sealed class Result<out T> : Serializable {
 
     abstract fun <U> map(f: (T) -> (U)): Result<U>
