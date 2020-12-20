@@ -193,6 +193,15 @@ sealed class Stream<out T> {
                 is Cons -> cons(afterDropWhile._head, Lazy { filter2(afterDropWhile._tail(), p) })
             }
         }
+
+        fun <T> fill(n: Int, element: Lazy<T>): Stream<T> {
+            tailrec fun fill(acc: Stream<T>, n: Int, element: Lazy<T>): Stream<T> = when {
+                n <= 0 -> acc
+                else -> fill(Cons(element, Lazy { acc }), n - 1, element)
+            }
+
+            return fill(Empty, n, element)
+        }
     }
 
 }
