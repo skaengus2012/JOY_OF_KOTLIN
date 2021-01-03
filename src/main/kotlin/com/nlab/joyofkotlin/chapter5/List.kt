@@ -24,10 +24,12 @@ import java.lang.StringBuilder
  * @author Doohyun
  */
 sealed class List<out T> {
+    abstract val sizeMemoized: Int
+
     abstract fun isEmpty(): Boolean
-    abstract fun sizeMemoized(): Int
     abstract fun headSafe(): Result<T>
     abstract fun lastSafe(): Result<T>
+    abstract fun tailSafe(): Result<List<T>>
 
     fun construct(item: @UnsafeVariance T): List<T> = Cons(item, this)
 
@@ -63,7 +65,7 @@ sealed class List<out T> {
     fun init(): List<T> = reverse().drop(1).reverse()
 
     fun getAt(index: Int): Result<T> {
-        return if (index < 0 || index >= sizeMemoized()) {
+        return if (index < 0 || index >= sizeMemoized) {
             Result.failure("Index out of bound")
         } else {
             foldLeft(
@@ -125,6 +127,8 @@ sealed class List<out T> {
 
     inline fun forAll(crossinline p: (T) -> Boolean): Boolean = !exists { !p(it) }
 
+    inline fun <U> map(crossinline mapper: (T) -> U): List<U> = map(this, mapper)
+
     private data class ResultPair<out T>(
         val first: Result<T>,
         val second: Int
@@ -146,22 +150,25 @@ sealed class List<out T> {
     }
 
     internal object Nil : List<Nothing>() {
+        override val sizeMemoized: Int = 0
         override fun isEmpty(): Boolean = true
         override fun toString(): String = "[Nil]"
-        override fun sizeMemoized(): Int = 0
         override fun headSafe(): Result<Nothing> = Result()
         override fun lastSafe(): Result<Nothing> = Result()
+        override fun tailSafe(): Result<Nothing> = Result()
     }
 
     internal class Cons<T>(internal val head: T, internal val tail: List<T>) : List<T>() {
 
-        override fun isEmpty(): Boolean = false
+        override val sizeMemoized: Int = tail.sizeMemoized + 1
 
-        override fun sizeMemoized(): Int = tail.sizeMemoized() + 1
+        override fun isEmpty(): Boolean = false
 
         override fun headSafe(): Result<T> = Result(head)
 
         override fun lastSafe(): Result<T> = foldLeft(this, Result()) { { value: T -> Result(value) } }
+
+        override fun tailSafe(): Result<List<T>> = Result(tail)
 
         override fun toString(): String = StringBuilder()
             .append("[")

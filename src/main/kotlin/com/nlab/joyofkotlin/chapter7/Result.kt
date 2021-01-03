@@ -31,7 +31,8 @@ sealed class Result<out T> : Serializable {
     abstract fun getOrElse(defaultValue: @UnsafeVariance T): T
     abstract fun orElse(defaultValue: () -> @UnsafeVariance T): Result<T>
     abstract fun mapFailure(lazyMessage: () -> String): Result<T>
-    abstract fun foreach(effect: (T) -> Unit)
+    abstract fun foreach(onSuccess: (T) -> Unit, onFailure: (RuntimeException) -> Unit)
+    fun foreach(effect: (T) -> Unit) = foreach(effect, {})
 
     fun filter(
         p: (T) -> Boolean,
@@ -62,7 +63,7 @@ sealed class Result<out T> : Serializable {
             failure(e)
         }
         override fun mapFailure(lazyMessage: () -> String): Result<T> = failure(lazyMessage())
-        override fun foreach(effect: (T) -> Unit) = Unit
+        override fun foreach(onSuccess: (T) -> Unit, onFailure: (RuntimeException) -> Unit) = onFailure(exception)
     }
 
     private class Success<out T>(private val value: T) : Result<T>() {
@@ -90,7 +91,7 @@ sealed class Result<out T> : Serializable {
         override fun getOrElse(defaultValue: @UnsafeVariance T): T = value
         override fun orElse(defaultValue: () -> @UnsafeVariance T): Result<T> = this
         override fun mapFailure(lazyMessage: () -> String): Result<T> = this
-        override fun foreach(effect: (T) -> Unit) = effect(value)
+        override fun foreach(onSuccess: (T) -> Unit, onFailure: (RuntimeException) -> Unit) = onSuccess(value)
     }
 
     companion object {

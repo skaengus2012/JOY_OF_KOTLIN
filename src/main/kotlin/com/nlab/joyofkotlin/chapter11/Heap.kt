@@ -52,7 +52,7 @@ sealed class Heap<out T : Comparable<@UnsafeVariance T>> {
 
     fun toList(): List<T> = foldLeft(List<T>()) { acc -> { value: T -> acc.construct(value) } }.reverse()
 
-    fun <U> foldLeft(identity: U, f: (U) -> (T) -> (U)): U = unfold(this, { pop() }, identity, f)
+    fun <U> foldLeft(identity: U, f: (U) -> (T) -> (U)): U = unfold(this, { it.pop() }, identity, f)
 
     internal abstract class Empty<out T : Comparable<@UnsafeVariance T>> : Heap<T>() {
         override val left: Option<Heap<T>> = Option()

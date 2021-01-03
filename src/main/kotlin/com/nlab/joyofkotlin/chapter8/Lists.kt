@@ -33,7 +33,7 @@ fun <T> flattenResult(list: List<Result<T>>): List<T> = flatten(
 
 fun <T> sequence(list: List<Result<T>>): Result<List<T>> = traverse(list) { result: Result<T> -> result }
 
-fun <T, U> traverse(list: List<T>, f: (T) -> Result<U>): Result<List<U>> = foldRight(list, Result()) { t: T ->
+fun <T, U> traverse(list: List<T>, f: (T) -> Result<U>): Result<List<U>> = foldRight(list, Result(List())) { t: T ->
     { ru: Result<List<U>> -> map2(ru, f(t)) { list: List<U> -> { u: U -> list.construct(u) } } }
 }
 
@@ -119,8 +119,8 @@ fun <T> List<T>.splitAt(index: Int): Pair<List<T>, List<T>> {
 
     return when {
         index < 0 -> splitAt(0)
-        index > sizeMemoized() -> splitAt(sizeMemoized())
-        else -> splitAtRec(this, List(), sizeMemoized() - index)
+        index > sizeMemoized -> splitAt(sizeMemoized)
+        else -> splitAtRec(this, List(), sizeMemoized - index)
     }
 }
 
@@ -130,11 +130,11 @@ fun <T> List<T>.divide(depth: Int): List<List<T>> {
     tailrec fun divideRec(acc: List<List<T>>, depth: Int): List<List<T>> = when(acc) {
         is List.Nil -> acc
         is List.Cons -> {
-            if (acc.head.sizeMemoized() < 2 || depth < 1) {
+            if (acc.head.sizeMemoized < 2 || depth < 1) {
                 acc
             } else {
                 divideRec(
-                    flatMap(acc) { list -> list.splitListAt(list.sizeMemoized() / 2) },
+                    flatMap(acc) { list -> list.splitListAt(list.sizeMemoized / 2) },
                     depth - 1
                 )
             }
